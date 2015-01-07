@@ -125,15 +125,19 @@ int main(int argc, char *argv[])
         cout << "Please specify Domain to lookup!" << endl;
         cout << endl;
         cout << "This program is designed to query and decode smartRNS data over standard DNS." << endl << endl;
-        cout << "USAGE: smartRNSclient [options] YourName@smartrns.net" << endl << endl;
+        cout << "USAGE: smartRNS_UDP_updater [options] YourName@smartrns.net" << endl << endl;
         cout << "options: n - allow unencrypted mode" << endl;
         cout << "         v - verbose: show all cycles" << endl;
         cout << "         s - show data-/config-structure" << endl;
         cout << "         r - raw (decrypted TXT records)" << endl;
         cout << "         c - show config" << endl;
-        cout << "         w - write netries" << endl;
+        cout << "         w - write entries" << endl;
         cout << "         d - delete entries" << endl << endl;
-        cout << "    Copyright (C) 2014 Stefan Helmert <stefan.helmert@gmx.net>" << endl;
+        cout << "    Copyright (C) 2014 - 2015 Stefan Helmert <stefan.helmert@gmx.net>" << endl;
+        cout << endl;
+        cout << "Try out writing entries! Please ensure at first that upper level entry has a valid configuration." << endl;
+        cout << endl;
+        cout << "EXAMPLE: smartRNS_UDP_updater w myName@test.smartrns.net \"smartrns.data{entry{type=email;email=myEmail@myDomain.com;push=1;}}\"" << endl;
         cout << endl;
         return 0;
     }
