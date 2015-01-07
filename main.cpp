@@ -87,22 +87,19 @@ int main(int argc, char *argv[])
     string domain, request, options, record;
     bool n, v, s, r, c, w, d;
     n = v = s = r = c = w = d = false; // allow unencrypted mode, verbose (show all recursion steps), show data structure, raw (show raw data), show configuration
-    vector<string> decvec;
     vector<string> encvec;
-    smartrns_conf_t conf, lastconf, resetconf;
-    smartrns_data_t data;
-    vector<keyval_t> keyvalvec;
     string key;
     size_t pos = 0;
+    int i = 0;
+
+    vector<vector<string>> alldecvecs;
+    vector<vector<keyval_t>> allkeyvalvecs;
+    vector<smartrns_conf_t> allconfs;
+    vector<smartrns_data_t> alldatas;
+    vector<string> alldomains;
+
     //UDPiface udp("127.0.0.1", 7334);
     UDPiface udp("178.63.154.91", 7334);
-
-    resetconf.contenc = NO_CONTENC;
-    resetconf.contprimenc = NO_PRIMENC;
-    conf = resetconf;
-
-
-    vector<string> txts;
 
     if(2==argc){
         request = argv[1]; // the domain to query
@@ -142,103 +139,46 @@ int main(int argc, char *argv[])
     }
 
 
+    smartquery query(request, n);
+
     // everything after the @
     domain = uritop(request, &pos);
     key = domain;
 
-    // now before the @
-    while(1){ // recursion over all subdomains
-
-
-        // get the DNS records
-        txts = getTXTrecs(domain, MAXRECS);
-        lastconf = conf;
-
-        decvec.clear();
-        try{
-            // do decryption of requestet DNS content
-            decvec = decrypt(txts, conf.salt+key, conf.contprimenc, conf.contenc);
-        }
-        catch(const primenc_et& f){
-            conf = resetconf;
-            cout << "No content primary encoding set!" << endl << endl;
-            break;
-        }
-        catch(const contenc_et& e){
-            conf = resetconf;
-            keyvalvec.clear();
-            cout << "No content secondary encoding set!" << endl << endl;
-            break;
-        }
-
-        // interprete the content
-        keyvalvec = txtrec2keyvalvec(decvec);
-        conf = smartrnsvec2smartrnsconf(keyvalvec);
-        data = smartrnsvec2smartrnsdata(keyvalvec);
-
-        if(!n){
-            if(NO_URIENC == conf.urienc){
-                cout << "No domain encryption used by server - break! Please use parameter 'n' to allow sending an unencrypted domain - This is not secure!" << endl;
-                break;
-            }
-            if(NO_CONTENC == conf.contenc){
-                cout << "No content encryption used by server - break! Please use parameter 'n' to allow receiving unencrypted data - This is not secure!" << endl;
-                break;
-            }
-        }
-
-        if(0==pos) break; // no remaining subdomain
-
-
+    // show recursive resolve steps
+    for(i=0;i<query.get_no_recursions()-1;i++){ // recursion over all subdomains
         if(v){
             if(r) {
-                cout << "REQUEST" << endl << endl << "    " << domain << endl << endl;
-                print_decvec(decvec);
+                cout << "REQUEST" << endl << endl << "    " << query.get_domain(i) << endl << endl;
+                print_decvec(query.get_decvec(i));
             }
-            if(s) print_key_val_vec(keyvalvec);   // output
-            if(c) print_smartrns_config(conf);    // output
-            print_smartrns_data(data);      // output
+            if(s) print_key_val_vec(query.get_keyvalvec(i));   // output
+            if(c) print_smartrns_config(query.get_conf(i));    // output
+            print_smartrns_data(query.get_data(i));      // output
         }
-        // next subdomain
-        try{
-            domain = getdomain(request, &pos, conf.subdomlen, conf.uriprimenc, conf.urienc, conf.salt)+'.'+domain;
-            key = request.substr(pos);
-        }
-        catch(const primenc_et& f){
-            if(PRIMENC_NOT_SPEC == f){
-                cout << "URI primary encoding of subdomain not specified in configuration, aborting!" << endl;
-            }
-            break;
-        }
-        catch(const urienc_et& e){
-            if(URIENC_NOT_SPEC == e){
-                cout << "URI secondary encoding of subdomain not specified in configuration, aborting!" << endl;
-            }
-            break;
-        }
-
     }
 
+    // show result
     if(r) {
-        cout << "REQUEST" << endl << endl << "    " << domain << endl << endl;
-        print_decvec(decvec);
+        cout << "REQUEST" << endl << endl << "    " << query.get_domain(-1) << endl << endl;
+        print_decvec(query.get_decvec(-1));
     }
+    if(s) print_key_val_vec(query.get_keyvalvec(-1));   // output
+    if(c) print_smartrns_config(query.get_conf(-1));    // output
+    print_smartrns_data(query.get_data(-1));      // output
 
-
+    // update entries
     if(d){
-        udp.senddata(update_packet_del(0x42, domain));
+        udp.senddata(update_packet_del(0x42, query.get_domain(-1)));
     }
     if(w){
         encvec.clear();
         encvec.push_back(record);
         key = request;
-        encvec = encrypt(encvec, lastconf.salt+key, lastconf.contprimenc, lastconf.contenc);
-        udp.senddata(update_packet_add_s(0x42, domain, encvec[0]));
+        encvec = encrypt(encvec, query.get_conf(-2).salt+key, query.get_conf(-2).contprimenc, query.get_conf(-2).contenc);
+        udp.senddata(update_packet_add_s(0x42, query.get_domain(-1), encvec[0]));
     }
-    if(s) print_key_val_vec(keyvalvec);   // output
-    if(c) print_smartrns_config(conf);    // output
 
-    print_smartrns_data(data);      // output
 
 
 

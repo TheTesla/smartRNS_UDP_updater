@@ -12,14 +12,18 @@ vector<keyval_t> txtrec2keyvalvec(string txtstr)
     uint32_t i, k;
     string key, keysstr, val;
     vector<string> keys;
-    size_t pos;
+    size_t pos, oldpos, oldpos2;
 
     key = "";
     keys.clear();
 
     i = 0;
+    pos = 0;
+    oldpos = std::string::npos;
+    oldpos2 = std::string::npos;
     try{
         while(std::string::npos!=pos){ // iterate over TXTrecord
+
             pos = txtstr.find_first_not_of(" "); // delete all spaces...
             txtstr = txtstr.substr(pos); // ...from beginning
             if("}"==txtstr.substr(0,1)){ // exit {...} expression
@@ -54,7 +58,10 @@ vector<keyval_t> txtrec2keyvalvec(string txtstr)
                 txtstr = txtstr.substr(1);
 
             }
-
+            // break if in loop
+            if((pos == oldpos) && (oldpos == oldpos2)) break;
+            oldpos2 = oldpos;
+            oldpos = pos;
         }
     }
     catch( std::exception const &exc){ // config ends
@@ -80,7 +87,7 @@ vector<keyval_t> txtrec2keyvalvec(vector<string> TXT)
 {
     uint32_t i;
     vector<keyval_t> keyvalvec, keyvalvectmp;
-    string txt, txtstr;
+
     for(i=0;i<TXT.size();i++){
         keyvalvectmp = txtrec2keyvalvec(TXT[i]);
         keyvalvec.insert(keyvalvec.end(), keyvalvectmp.begin(), keyvalvectmp.end());

@@ -34,8 +34,8 @@ vector<string> getTXTrecs(string domain, uint32_t maxTXTs)
         if(0==rdata) {
             break;
         }
-        TXT.assign((const char*) rdata+1);
-        TXT[len] = 0;
+        TXT.assign((const char*) rdata, len);
+        TXT = TXT.substr(1);
         TXTs.push_back(TXT);
     }
     return TXTs;

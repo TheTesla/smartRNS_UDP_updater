@@ -195,7 +195,7 @@ void print_smartrns_data(smartrns_data_t data)
     cout << "  Entries (" << data.entries.size() << "): " << endl;
     for(i=0;i<data.entries.size();i++){
         cout.width(3);
-        cout << i <<" Name:         " << data.entries[i].name << endl;
+        cout << i << " Name:         " << data.entries[i].name << endl;
         cout << "    Comment:      " << data.entries[i].comment << endl;
         cout << "    Type:         " << entrytype2str(data.entries[i].type) << endl;
         cout << "    State:        " << state2str(data.entries[i].state) << endl;
