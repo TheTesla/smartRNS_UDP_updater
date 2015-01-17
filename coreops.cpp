@@ -26,7 +26,8 @@ string uripart(string uri, size_t* pos)
 string getdomain(string uri, size_t* pos, uint32_t subdomlen, primenc_et primenc, urienc_et urienc, string salt)
 {
     string suburi;
-    byte encdom[CryptoPP::SHA::DIGESTSIZE];
+    size_t len = 0;
+    byte encdom[512];
     suburi = uripart(uri, pos);
 
     if(NO_PRIMENC == primenc){
@@ -40,14 +41,19 @@ string getdomain(string uri, size_t* pos, uint32_t subdomlen, primenc_et primenc
         nourienc(encdom, salt+uri.substr(*pos));
     }else if(SHA_1 == urienc){
         sha1(encdom, salt+uri.substr(*pos));
+        len = CryptoPP::SHA::DIGESTSIZE;
     }else if(SHA_224 == urienc){
         sha224(encdom, salt+uri.substr(*pos));
+        len = CryptoPP::SHA224::DIGESTSIZE;
     }else if(SHA_256 == urienc){
         sha256(encdom, salt+uri.substr(*pos));
+        len = CryptoPP::SHA256::DIGESTSIZE;
     }else if(SHA_384 == urienc){
         sha384(encdom, salt+uri.substr(*pos));
+        len = CryptoPP::SHA384::DIGESTSIZE;
     }else if(SHA_512 == urienc){
         sha512(encdom, salt+uri.substr(*pos));
+        len = CryptoPP::SHA512::DIGESTSIZE;
     }else{
         cout << "getdomain() - secondary encoding not supported!" << endl;
         throw urienc;
@@ -55,9 +61,9 @@ string getdomain(string uri, size_t* pos, uint32_t subdomlen, primenc_et primenc
     }
 
     if(BASE16 == primenc){
-        return base16enc(encdom, CryptoPP::SHA::DIGESTSIZE).substr(0,subdomlen);
+        return base16enc(encdom, len).substr(0,subdomlen);
     }else if(BASE32 == primenc){
-        return base32enc(encdom, CryptoPP::SHA::DIGESTSIZE).substr(0,subdomlen);
+        return base32enc(encdom, len).substr(0,subdomlen);
     }else if(NO_PRIMENC == primenc){
         cout << "getdomain() - combination not supported! Hashed value must be primencoded!" << endl;
         throw primenc;
