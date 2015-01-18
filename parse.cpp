@@ -24,12 +24,13 @@ vector<keyval_t> txtrec2keyvalvec(string txtstr)
 
     try{
         while(std::string::npos!=pos){ // iterate over TXTrecord
+
             pos = txtstr.find_first_not_of(" "); // delete all spaces...
             txtstr = txtstr.substr(pos); // ...from beginning
             if("}"==txtstr.substr(0,1)){ // exit {...} expression
                 if(0==keys.size()){
-                    elem.key = "smartrns.parser.error";
-                    elem.val = "syntax: '{'<'}'"; // more closing brackets than opening ones
+                    elem.key = "smartrns.error.parser";
+                    elem.val = "syntax: '{'<'}'";
                     smartrnsvec.push_back(elem);
                     break;
                 }

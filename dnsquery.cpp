@@ -36,6 +36,7 @@ vector<string> getTXTrecs(string domain, uint32_t maxTXTs)
         }
         TXT.assign((const char*) rdata, len);
         TXT = TXT.substr(1);
+        cout << TXT << endl;
         TXTs.push_back(TXT);
     }
     return TXTs;

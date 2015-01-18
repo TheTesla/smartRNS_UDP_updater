@@ -72,6 +72,7 @@ string base32enc(byte* enc, uint32_t len)
     b32e.Attach(new CryptoPP::StringSink(retstr));
     b32e.Put(enc, len);
     b32e.MessageEnd();
+    std::transform(retstr.begin(), retstr.end(), retstr.begin(), ::tolower);
     return retstr;
 }
 
@@ -129,11 +130,13 @@ void base64dec(byte* dec, string base64str)
 
 void base32dec(byte* dec, string base32str)
 {
+    std::transform(base32str.begin(), base32str.end(), base32str.begin(), ::toupper);
     base32dec(dec, (byte*) base32str.c_str(), base32str.size());
 }
 
 void base16dec(byte* dec, string base16str)
 {
+    std::transform(base16str.begin(), base16str.end(), base16str.begin(), ::toupper);
     base16dec(dec, (byte*) base16str.c_str(), base16str.size());
 }
 
