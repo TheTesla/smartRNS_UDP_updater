@@ -5,4 +5,16 @@ Program to update smartRNS entries via UDP - This is directly accessing the inte
 
 Dependencies
 -------------
-  libcrypto++-dev
+```
+libcrypto++-dev
+```
+
+Compiling
+----------
+```
+./dirtyCompile.sh
+```
+and run with
+```
+bin/Release/smartRNS_smtp_updater
+```
