@@ -103,7 +103,7 @@ int main(int argc, char *argv[])
 
     if(2==argc){
         request = argv[1]; // the domain to query
-    }else if(3==argc | 4==argc){
+    }else if((3==argc) | (4==argc)){
         options = argv[1];
         if(std::string::npos != options.find_first_of('n')) n = true;
         if(std::string::npos != options.find_first_of('v')) v = true;

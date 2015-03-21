@@ -11,7 +11,7 @@
 				<Option object_output="obj/Debug/" />
 				<Option type="1" />
 				<Option compiler="gcc" />
-				<Option parameters='vcrw test@test.smartrns.net &quot;smartrns.data{version=test42;}&quot;' />
+				<Option parameters="vcrs sha256@test.smartrns.net" />
 				<Compiler>
 					<Add option="-g" />
 				</Compiler>

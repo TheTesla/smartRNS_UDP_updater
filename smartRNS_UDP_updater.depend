@@ -62,7 +62,7 @@
 1420649356 source:/home/stefan/smartRNS_UDP_updater/data.cpp
 	"data.h"
 
-1421539636 source:/home/stefan/smartRNS_UDP_updater/dnsquery.cpp
+1421608827 source:/home/stefan/smartRNS_UDP_updater/dnsquery.cpp
 	"dnsquery.h"
 	<iostream>
 
