@@ -17,7 +17,7 @@
 				</Compiler>
 			</Target>
 			<Target title="Release">
-				<Option output="bin/Release/smartRNS_smtp_updater" prefix_auto="1" extension_auto="1" />
+				<Option output="bin/Release/smartRNS_UDP_updater" prefix_auto="1" extension_auto="1" />
 				<Option object_output="obj/Release/" />
 				<Option type="1" />
 				<Option compiler="gcc" />

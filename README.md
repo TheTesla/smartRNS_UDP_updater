@@ -16,5 +16,5 @@ Compiling
 ```
 and run with
 ```
-bin/Release/smartRNS_smtp_updater
+bin/Release/smartRNS_UDP_updater
 ```
